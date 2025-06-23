@@ -15,7 +15,7 @@ class PasienSeeder extends Seeder
     /**
      * Run the database seeds.
      * 
-     * Seeder ini membuat:
+     * Seeder DB ini membuat:
      * - 3 pasien dengan data realistis
      * - Jadwal kontrol untuk setiap pasien (jenis: 'kontrol')
      * - Pengingat obat harian untuk setiap pasien (jenis: 'obat')
