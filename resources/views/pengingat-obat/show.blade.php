@@ -1,33 +1,30 @@
-@extends('layouts.app')
-
-@section('title', 'Detail Pengingat Obat')
-
-@section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="mb-6">
-        <div class="flex items-center space-x-2 text-sm text-gray-500">
-            <a href="{{ route('pengingat-obat.index') }}" class="hover:text-gray-700">Pengingat Obat</a>
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-            </svg>
-            <span>Detail Pengingat</span>
-        </div>
-        
-        <div class="flex items-center justify-between mt-2">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Detail Pengingat Obat</h1>
-                <p class="mt-1 text-sm text-gray-600">Informasi lengkap pengingat obat untuk {{ $jadwal->pasien->nama }}</p>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex flex-col space-y-2">
+            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                <a href="{{ route('pengingat-obat.index') }}" class="hover:text-gray-700">Pengingat Obat</a>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Detail Pengingat</span>
             </div>
-            <div class="flex space-x-2">
-                @if($jadwal->status === 'menunggu')
-                    <button onclick="updateStatus('terkirim')" 
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                        </svg>
-                        Tandai Terkirim
-                    </button>
-                @endif
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        {{ __('Detail Pengingat Obat') }}
+                    </h2>
+                    <p class="text-sm text-gray-600">Informasi lengkap pengingat obat untuk {{ $jadwal->pasien->nama }}</p>
+                </div>
+                <div class="flex space-x-2">
+                    @if($jadwal->status === 'menunggu')
+                        <button onclick="updateStatus('terkirim')" 
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                            Tandai Terkirim
+                        </button>
+                    @endif
                 
                 <button onclick="showRescheduleModal()" 
                         class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -344,10 +341,11 @@ function copyToClipboard() {
     const button = event.target;
     const originalText = button.innerHTML;
     button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-    
-    setTimeout(() => {
+      setTimeout(() => {
         button.innerHTML = originalText;
     }, 2000);
 }
 </script>
-@endsection
+        </div>
+    </div>
+</x-app-layout>

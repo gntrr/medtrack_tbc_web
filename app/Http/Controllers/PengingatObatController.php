@@ -165,7 +165,8 @@ class PengingatObatController extends Controller
      */
     public function bulkCreate()
     {
-        $pasienAktif = Pasien::where('status', 'aktif')->get();
+        $pasienAktif = Pasien::orderBy('nama')
+            ->get();
         
         return view('pengingat-obat.bulk-create', compact('pasienAktif'));
     }

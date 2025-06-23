@@ -1,25 +1,35 @@
-@extends('layouts.app')
-
-@section('title', 'Buat Pengingat Obat - ' . $pasien->nama)
-
-@section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="mb-6">
-        <div class="flex items-center space-x-2 text-sm text-gray-500">
-            <a href="{{ route('pasien.index') }}" class="hover:text-gray-700">Pasien</a>
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-            </svg>
-            <a href="{{ route('pasien.show', $pasien) }}" class="hover:text-gray-700">{{ $pasien->nama }}</a>
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-            </svg>
-            <span>Buat Pengingat Obat</span>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex flex-col space-y-2">
+            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                <a href="{{ route('pasien.index') }}" class="hover:text-gray-700">Pasien</a>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <a href="{{ route('pasien.show', $pasien) }}" class="hover:text-gray-700">{{ $pasien->nama }}</a>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Buat Pengingat Obat</span>
+            </div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Buat Pengingat Obat Harian') }}
+            </h2>
+            <p class="text-sm text-gray-600">Atur jadwal pengingat minum obat harian untuk {{ $pasien->nama }}</p>
         </div>
-        
-        <h1 class="text-2xl font-bold text-gray-900 mt-2">Buat Pengingat Obat Harian</h1>
-        <p class="mt-1 text-sm text-gray-600">Atur jadwal pengingat minum obat harian untuk {{ $pasien->nama }}</p>
-    </div>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if ($errors->any())
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
     <div class="bg-white shadow rounded-lg">
         <div class="px-6 py-4 border-b border-gray-200">
@@ -172,9 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             previewSection.style.display = 'none';
         }
-    }
-
-    waktuInput.addEventListener('change', updatePreview);
+    }    waktuInput.addEventListener('change', updatePreview);
     tanggalInput.addEventListener('change', updatePreview);
     durasiInput.addEventListener('input', updatePreview);
 
@@ -182,4 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePreview();
 });
 </script>
-@endsection
+        </div>
+    </div>
+</x-app-layout>

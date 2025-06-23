@@ -1,13 +1,10 @@
-@extends('layouts.app')
-
-@section('title', 'Pengingat Obat Harian')
-
-@section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="mb-6">
+<x-app-layout>
+    <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Pengingat Obat Harian</h1>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ __('Pengingat Obat Harian') }}
+                </h2>
                 <p class="mt-1 text-sm text-gray-600">Kelola jadwal pengingat minum obat untuk pasien</p>
             </div>
             <div class="mt-4 sm:mt-0 sm:ml-4 flex space-x-3">
@@ -18,6 +15,13 @@
                     </svg>
                     Buat Massal
                 </a>
+                <a href="{{ route('pasien.index') }}" 
+                   class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Pilih Pasien
+                </a>
                 <a href="{{ route('konfirmasi-obat.statistik') }}" 
                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +31,21 @@
                 </a>
             </div>
         </div>
-    </div>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if(session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded" role="alert">
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded" role="alert">
+                    <p>{{ session('error') }}</p>
+                </div>
+            @endif
 
     <!-- Pengingat Hari Ini -->
     <div class="bg-white shadow rounded-lg mb-6">
@@ -153,10 +171,10 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>
-                @endforeach
+                    </div>                @endforeach
             </div>
         </div>
     @endif
-</div>
-@endsection
+        </div>
+    </div>
+</x-app-layout>
