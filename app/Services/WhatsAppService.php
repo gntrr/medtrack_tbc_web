@@ -11,14 +11,13 @@ class WhatsAppService
 {
     protected $apiKey;
     protected $apiUrl;
-    protected $senderNumber;
-
-    public function __construct()
+    protected $senderNumber;    public function __construct()
     {
-        // Mengambil konfigurasi dari .env
-        $this->apiKey = config('whatsapp.api_key');
-        $this->apiUrl = config('whatsapp.api_url');
-        $this->senderNumber = config('whatsapp.sender_number');
+        // Mengambil konfigurasi dari database settings terlebih dahulu,
+        // fallback ke .env jika belum ada di database
+        $this->apiKey = \App\Models\Setting::get('whatsapp_api_key', config('whatsapp.api_key'));
+        $this->apiUrl = \App\Models\Setting::get('whatsapp_api_url', config('whatsapp.api_url'));
+        $this->senderNumber = \App\Models\Setting::get('whatsapp_sender_number', config('whatsapp.sender_number'));
     }
 
     /**

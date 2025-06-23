@@ -30,6 +30,9 @@
                     <x-nav-link :href="route('riwayat.index')" :active="request()->routeIs('riwayat.*')">
                         {{ __('Riwayat') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
+                        {{ __('Pengaturan') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -99,6 +102,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('riwayat.index')" :active="request()->routeIs('riwayat.*')">
                 {{ __('Riwayat') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
+                {{ __('Pengaturan') }}
             </x-responsive-nav-link>
         </div>
 

@@ -37,6 +37,13 @@
 - **Auto Cleanup**: Pembersihan data lama secara otomatis
 - **Audit Logging**: Log semua aktivitas untuk monitoring
 
+#### ⚙️ **Sistem Pengaturan Dinamis**
+- **Database Settings**: Konfigurasi tersimpan di database, tidak di .env
+- **Web Interface**: Kelola pengaturan via admin panel
+- **Real-time Update**: Perubahan langsung aktif tanpa restart server
+- **Security**: Sensitive data terenkripsi otomatis
+- **Multi-group**: Pengaturan terorganisir per kategori
+
 ## 🏗️ Arsitektur Sistem
 
 ### 📊 **Database Schema**
@@ -44,7 +51,8 @@
 ├── users (tenaga kesehatan)
 ├── pasien (data pasien)
 ├── jadwal (schedules: kontrol & obat)
-└── riwayat (activity history)
+├── riwayat (activity history)
+└── settings (dynamic configuration)
 ```
 
 ### 🔄 **Flow Pengingat Obat**
@@ -110,21 +118,21 @@ php artisan migrate
 php artisan db:seed
 ```
 
-#### 5. WhatsApp API Configuration
-Edit file `.env` dan tambahkan konfigurasi WhatsApp API:
-
-```env
-# WhatsApp API Configuration (Fonnte)
-WHATSAPP_API_KEY="your_api_key_here"
-WHATSAPP_API_URL="https://api.fonnte.com/send"
-WHATSAPP_SENDER_NUMBER="628xxxxxxxxxx"
+#### 5. Setup WhatsApp API Settings
+```bash
+# Run seeders to setup initial settings
+php artisan db:seed --class=SettingsSeeder
 ```
 
-**Cara mendapatkan API Key Fonnte:**
-1. Daftar di [https://fonnte.com](https://fonnte.com)
-2. Verifikasi nomor WhatsApp
-3. Copy API key dari dashboard
-4. Paste ke file `.env`
+**⚠️ PENTING: Konfigurasi WhatsApp API dilakukan melalui web interface**
+
+Setelah sistem berjalan:
+1. Login sebagai admin
+2. Buka menu **"Pengaturan"**
+3. Konfigurasi WhatsApp API:
+   - **API Key**: Masukkan API key dari Fonnte
+   - **Sender Number**: Format `628xxxxxxxxxx`
+   - **API URL**: Biarkan default `https://api.fonnte.com/send`
 
 #### 6. Build Assets
 ```bash
@@ -224,6 +232,13 @@ composer install --optimize-autoloader --no-dev
 1. Buka `https://yourdomain.com`
 2. Login dengan akun admin
 3. Dashboard utama akan menampilkan statistik
+
+#### Konfigurasi WhatsApp API (Pertama Kali)
+1. **Menu Pengaturan** → **WhatsApp API Settings**
+2. Masukkan **API Key** dari dashboard Fonnte
+3. Masukkan **Nomor WhatsApp** pengirim (format: 628xxxxxxxxxx)
+4. Klik **"Simpan Pengaturan"**
+5. Test pengiriman pesan untuk memastikan konfigurasi benar
 
 #### Manajemen Pasien
 1. **Menu Pasien** → **Tambah Pasien Baru**
@@ -331,10 +346,11 @@ Semua aktivitas tercatat di log:
 ## 🐛 Troubleshooting
 
 ### ❌ WhatsApp Tidak Terkirim
-1. **Cek API Key**: Pastikan `WHATSAPP_API_KEY` benar
+1. **Cek Pengaturan API**: Menu Pengaturan → Verifikasi API Key
 2. **Cek Saldo**: Login ke dashboard Fonnte, cek saldo
-3. **Cek Nomor**: Pastikan format nomor `628xxxxxxxxxx`
-4. **Cek Log**: `tail -f storage/logs/laravel.log`
+3. **Cek Nomor**: Pastikan format nomor `628xxxxxxxxxx` di menu Pengaturan
+4. **Test Pengiriman**: Gunakan fitur test di menu Pengaturan
+5. **Cek Log**: `tail -f storage/logs/laravel.log`
 
 ### ❌ Link Konfirmasi Error
 1. **Cek APP_URL**: Pastikan `APP_URL` sesuai domain
@@ -361,29 +377,36 @@ app/
 │   └── TestPengingatObat.php       # Command testing
 ├── Http/Controllers/
 │   ├── PengingatObatController.php # CRUD pengingat obat
-│   └── KonfirmasiObatController.php # Handle konfirmasi
+│   ├── KonfirmasiObatController.php # Handle konfirmasi
+│   └── SettingsController.php      # Pengaturan dinamis
 ├── Jobs/
 │   └── KirimPengingatObatHarian.php # Background job WhatsApp
 ├── Models/
 │   ├── Jadwal.php                  # Model jadwal
-│   └── Pasien.php                  # Model pasien
+│   ├── Pasien.php                  # Model pasien
+│   └── Setting.php                 # Model pengaturan dinamis
 └── Services/
-    └── WhatsAppService.php         # Service WhatsApp API
+    └── WhatsAppService.php         # Service WhatsApp API (DB-based)
 
 resources/views/
 ├── pengingat-obat/                 # Views admin pengingat obat
-└── konfirmasi-obat/                # Views konfirmasi pasien
+├── konfirmasi-obat/                # Views konfirmasi pasien
+└── settings/                       # Views pengaturan dinamis
 
 database/
 ├── migrations/                     # Database schema
-└── seeders/                        # Sample data
+└── seeders/                        # Sample data + SettingsSeeder
 ```
 
 ## 📞 Support & Kontribusi
 
 ### 🆘 Bantuan
 Jika mengalami kesulitan dalam instalasi atau konfigurasi:
-1. Cek dokumentasi tambahan di folder `docs/`
+1. Cek dokumentasi tambahan di folder `docs/` atau file dokumentasi:
+   - `INSTALASI_LENGKAP.md` - Panduan instalasi detail
+   - `MIGRASI_ENV_TO_DATABASE.md` - Panduan migrasi settings dari .env ke database
+   - `SISTEM_PENGATURAN_DINAMIS.md` - Dokumentasi sistem pengaturan dinamis
+   - `VIEW_BLADE_COMPONENTS_FIX.md` - Dokumentasi perbaikan view Blade Components
 2. Lihat file `DOMAIN_HOSTING_SETUP.md` untuk setup production
 3. Lihat file `FORMAT_LINK_KONFIRMASI.md` untuk detail keamanan
 

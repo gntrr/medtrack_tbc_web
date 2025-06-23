@@ -8,6 +8,7 @@ use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\PengingatController;
 use App\Http\Controllers\KonfirmasiObatController;
 use App\Http\Controllers\PengingatObatController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,6 +66,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Settings (Admin only)
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/whatsapp', [SettingsController::class, 'updateWhatsApp'])->name('settings.update-whatsapp');
+    Route::put('/settings/general', [SettingsController::class, 'updateGeneral'])->name('settings.update-general');
+    Route::post('/settings/test-whatsapp', [SettingsController::class, 'testWhatsApp'])->name('settings.test-whatsapp');
+    Route::get('/settings/clear-cache', [SettingsController::class, 'clearCache'])->name('settings.clear-cache');
 });
 
 // Rute untuk Pengingat WhatsApp

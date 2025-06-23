@@ -18,6 +18,8 @@
 
 ## 🏁 Quick Start (5 Menit)
 
+> **📌 CATATAN PENTING**: Mulai versi terbaru, konfigurasi WhatsApp API tidak lagi melalui file `.env` tetapi melalui web interface (menu Pengaturan) setelah sistem berjalan.
+
 ### 1. Clone & Install
 ```bash
 git clone <repository-url> medtrack
@@ -32,22 +34,18 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-### 3. Database Setup
+### 4. Database & Settings Setup
 ```bash
 # Buat database di MySQL/phpMyAdmin
 # Nama database: db_MedTrack
 
-# Run migrations
+# Run migrations dan seeders
 php artisan migrate
 php artisan db:seed
+php artisan db:seed --class=SettingsSeeder
 ```
 
-### 4. WhatsApp API Setup
-Edit `.env`:
-```env
-WHATSAPP_API_KEY="YOUR_FONNTE_API_KEY"
-WHATSAPP_SENDER_NUMBER="628xxxxxxxxxx"
-```
+**⚠️ WhatsApp API dikonfigurasi via web interface setelah login**
 
 ### 5. Start Development Server
 ```bash
@@ -120,9 +118,19 @@ DB_PASSWORD=
 #### 3. Dapatkan API Key
 1. Dashboard → "API" → "Get API Key"
 2. Copy API key yang diberikan
-3. Paste ke file `.env`
+3. **JANGAN MASUKKAN KE .env LAGI!**
 
-#### 4. Test API
+#### 4. Konfigurasi via Web Interface
+Setelah sistem Laravel berjalan:
+1. Login sebagai admin ke sistem
+2. Buka menu **"Pengaturan"**  
+3. Konfigurasi WhatsApp API:
+   - **API Key**: Paste API key dari Fonnte
+   - **Sender Number**: Format `628xxxxxxxxxx`
+   - **API URL**: Biarkan default
+4. Klik **"Simpan Pengaturan"**
+
+#### 5. Test API
 ```bash
 php artisan test:pengingat-obat --dry-run
 ```
@@ -355,10 +363,17 @@ mysql -u root -p -e "SELECT 1"
 ```
 
 #### 5. WhatsApp API Error
-1. **Invalid API Key**: Cek kembali API key di dashboard Fonnte
-2. **Device Disconnected**: Reconnect WhatsApp di dashboard
-3. **Insufficient Balance**: Top up saldo di dashboard
-4. **Invalid Number Format**: Gunakan format `628xxxxxxxxxx`
+1. **Invalid API Key**: 
+   - Buka menu **Pengaturan** di sistem
+   - Verifikasi API key sesuai dengan dashboard Fonnte
+2. **Device Disconnected**: 
+   - Reconnect WhatsApp di dashboard Fonnte
+   - Test ulang via menu Pengaturan
+3. **Insufficient Balance**: 
+   - Top up saldo di dashboard Fonnte
+4. **Invalid Number Format**: 
+   - Edit di menu **Pengaturan** 
+   - Gunakan format `628xxxxxxxxxx`
 
 ### Advanced Debugging
 
@@ -409,11 +424,54 @@ php artisan telescope:install
 
 Setelah instalasi berhasil:
 
-1. **✅ Setup Users**: Buat akun admin pertama
-2. **✅ Add Patients**: Input data pasien
-3. **✅ Create Schedules**: Buat jadwal pengingat obat
-4. **✅ Test WhatsApp**: Kirim test message
-5. **✅ Setup Cron**: Aktifkan pengiriman otomatis
-6. **✅ Monitor**: Pantau logs dan performance
+1. **✅ Setup Settings**: Konfigurasi WhatsApp API via menu Pengaturan
+2. **✅ Setup Users**: Buat akun admin pertama
+3. **✅ Add Patients**: Input data pasien
+4. **✅ Create Schedules**: Buat jadwal pengingat obat
+5. **✅ Test WhatsApp**: Kirim test message via menu Pengaturan
+6. **✅ Setup Cron**: Aktifkan pengiriman otomatis
+7. **✅ Monitor**: Pantau logs dan performance
+
+## 🔧 Sistem Pengaturan Dinamis
+
+### Fitur Pengaturan Terbaru
+- **Database-based**: Semua pengaturan disimpan di database
+- **Web Interface**: Kelola via admin panel, tidak perlu edit file
+- **Real-time**: Perubahan langsung aktif tanpa restart
+- **Security**: Sensitive data terenkripsi otomatis
+- **Kategorisasi**: Pengaturan terorganisir per grup
+
+### Migrasi dari .env ke Database
+Jika sebelumnya menggunakan .env untuk WhatsApp API:
+
+```bash
+# Backup .env lama
+cp .env .env.backup
+
+# Hapus konfigurasi WhatsApp dari .env
+# Tidak perlu lagi:
+# WHATSAPP_API_KEY=
+# WHATSAPP_SENDER_NUMBER=
+# WHATSAPP_API_URL=
+
+# Jalankan seeder untuk setup pengaturan
+php artisan db:seed --class=SettingsSeeder
+```
+
+### Penggunaan Menu Pengaturan
+1. Login sebagai admin
+2. Klik menu **"Pengaturan"**
+3. Pilih kategori pengaturan (WhatsApp, General, dll)
+4. Edit nilai pengaturan
+5. Klik **"Simpan"**
+6. Pengaturan langsung aktif
+
+**🎉 Selamat! Sistem MedTrack siap digunakan!**
+
+## 📚 Dokumentasi Tambahan
+
+- `MIGRASI_ENV_TO_DATABASE.md` - Panduan migrasi settings
+- `SISTEM_PENGATURAN_DINAMIS.md` - Detail sistem pengaturan
+- `VIEW_BLADE_COMPONENTS_FIX.md` - Perbaikan view components
 
 **🎉 Selamat! Sistem MedTrack siap digunakan!**
