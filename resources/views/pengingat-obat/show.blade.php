@@ -242,10 +242,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p class="text-sm font-medium text-gray-900">{{ $riwayat->deskripsi }}</p>
-                                <p class="text-sm text-gray-500">{{ $riwayat->tanggal_waktu->format('d F Y, H:i') }}</p>
+                            </div>                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-medium text-gray-900">{{ $riwayat->pesan ?? 'Pesan tidak tersedia' }}</p>
+                                <p class="text-sm text-gray-500">{{ $riwayat->waktu_pengiriman ? $riwayat->waktu_pengiriman->format('d F Y, H:i') : 'Waktu tidak tersedia' }}</p>
                             </div>
                         </div>
                     @endforeach
