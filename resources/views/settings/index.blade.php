@@ -194,8 +194,7 @@
                     <div class="ml-3">
                         <p class="text-sm text-blue-700">
                             <strong>Informasi Penting:</strong><br>
-                            • Pengaturan yang disimpan di database akan menggantikan konfigurasi di file .env<br>
-                            • API Key akan dienkripsi secara otomatis untuk keamanan<br>
+                            • Pengaturan key otomatis terganti ke pengaturan default jika ada deployment baru<br>
                             • Gunakan tombol "Test WhatsApp" untuk memverifikasi koneksi<br>
                             • Clear cache jika pengaturan tidak berubah setelah disimpan
                         </p>

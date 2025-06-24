@@ -75,8 +75,7 @@
                                         • {{ $pengingat->pasien->nomor_telepon }}
                                     </div>
                                 </div>
-                            </div>
-                            <div class="flex items-center space-x-2">
+                            </div>                            <div class="flex items-center space-x-2">
                                 <!-- Status Konfirmasi -->
                                 @if($pengingat->status_konfirmasi === 'sudah')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -114,6 +113,21 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                         Menunggu
                                     </span>
+                                @endif
+
+                                <!-- Tombol Kirim Manual (hanya untuk status menunggu) -->
+                                @if($pengingat->status === 'menunggu')
+                                    <form action="{{ route('pengingat-obat.kirim-manual', $pengingat) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" 
+                                                onclick="return confirm('Kirim pengingat WhatsApp ke {{ $pengingat->pasien->nama }}?')"
+                                                class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                            </svg>
+                                            Kirim
+                                        </button>
+                                    </form>
                                 @endif
 
                                 <a href="{{ route('pengingat-obat.show', $pengingat) }}" 

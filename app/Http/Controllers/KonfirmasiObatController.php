@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jadwal;
-use App\Models\Riwayat;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -58,20 +57,12 @@ class KonfirmasiObatController extends Controller
         $now = Carbon::now();
         $today = $now->toDateString();
         $jadwalDate = $jadwal->tanggal_waktu_pengingat->toDateString();
-
+        
         if ($today !== $jadwalDate) {
             // Mark as late if not confirmed on the same day
             $jadwal->update([
                 'status_konfirmasi' => 'terlambat',
                 'tgl_waktu_konfirmasi' => $now,
-            ]);
-
-            // Create history record
-            Riwayat::create([
-                'jadwal_id' => $jadwal->id,
-                'jenis_aktivitas' => 'konfirmasi_terlambat',
-                'deskripsi' => 'Konfirmasi minum obat terlambat',
-                'tanggal_waktu' => $now,
             ]);
 
             return view('konfirmasi-obat.status', [
@@ -85,14 +76,6 @@ class KonfirmasiObatController extends Controller
         $jadwal->update([
             'status_konfirmasi' => 'sudah',
             'tgl_waktu_konfirmasi' => $now,
-        ]);
-
-        // Create history record
-        Riwayat::create([
-            'jadwal_id' => $jadwal->id,
-            'jenis_aktivitas' => 'konfirmasi_obat',
-            'deskripsi' => 'Konfirmasi minum obat berhasil',
-            'tanggal_waktu' => $now,
         ]);
 
         return view('konfirmasi-obat.status', [

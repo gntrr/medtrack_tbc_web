@@ -212,4 +212,30 @@ class PengingatObatController extends Controller
         return redirect()->route('pengingat-obat.index')
             ->with('success', "Berhasil membuat {$totalCreated} jadwal pengingat obat untuk {$jumlahPasien} pasien.");
     }
+      /**
+     * Send manual reminder for specific medicine schedule.
+     */
+    public function kirimManual(Jadwal $jadwal)
+    {
+        if (!$jadwal->isObatHarian()) {
+            return redirect()->back()
+                ->with('error', 'Hanya pengingat obat harian yang bisa dikirim manual.');
+        }
+
+        try {
+            // Dispatch job untuk kirim pesan WhatsApp
+            \App\Jobs\KirimPengingatWhatsApp::dispatch($jadwal);
+            
+            return redirect()->back()
+                ->with('success', "Pengingat obat berhasil dikirim ke {$jadwal->pasien->nama}");
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim pengingat obat manual', [
+                'jadwal_id' => $jadwal->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->back()
+                ->with('error', "Gagal mengirim pengingat: {$e->getMessage()}");
+        }
+    }
 }

@@ -25,7 +25,7 @@
                         {{ __('Pengingat Obat') }}
                     </x-nav-link>
                     <x-nav-link :href="route('pengingat.index')" :active="request()->routeIs('pengingat.*')">
-                        {{ __('WhatsApp') }}
+                        {{ __('Pengingat Kontrol') }}
                     </x-nav-link>
                     <x-nav-link :href="route('riwayat.index')" :active="request()->routeIs('riwayat.*')">
                         {{ __('Riwayat') }}
@@ -98,7 +98,7 @@
                 {{ __('Pengingat Obat') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('pengingat.index')" :active="request()->routeIs('pengingat.*')">
-                {{ __('WhatsApp') }}
+                {{ __('Pengingat Kontrol') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('riwayat.index')" :active="request()->routeIs('riwayat.*')">
                 {{ __('Riwayat') }}

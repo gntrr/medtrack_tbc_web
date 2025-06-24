@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/pengingat-obat/{jadwal}/status', [PengingatObatController::class, 'updateStatus'])->name('pengingat-obat.update-status');
     Route::put('/pengingat-obat/{jadwal}/reschedule', [PengingatObatController::class, 'reschedule'])->name('pengingat-obat.reschedule');
     Route::delete('/pengingat-obat/{jadwal}', [PengingatObatController::class, 'destroy'])->name('pengingat-obat.destroy');
+    Route::post('/pengingat-obat/{jadwal}/kirim-manual', [PengingatObatController::class, 'kirimManual'])->name('pengingat-obat.kirim-manual');
     
     // Statistik Konfirmasi Obat
     Route::get('/konfirmasi-obat/statistik', [KonfirmasiObatController::class, 'statistik'])->name('konfirmasi-obat.statistik');
