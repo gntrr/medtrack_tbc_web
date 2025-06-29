@@ -404,11 +404,8 @@ database/
 Jika mengalami kesulitan dalam instalasi atau konfigurasi:
 1. Cek dokumentasi tambahan di folder `docs/` atau file dokumentasi:
    - `INSTALASI_LENGKAP.md` - Panduan instalasi detail
-   - `MIGRASI_ENV_TO_DATABASE.md` - Panduan migrasi settings dari .env ke database
-   - `SISTEM_PENGATURAN_DINAMIS.md` - Dokumentasi sistem pengaturan dinamis
-   - `VIEW_BLADE_COMPONENTS_FIX.md` - Dokumentasi perbaikan view Blade Components
-2. Lihat file `DOMAIN_HOSTING_SETUP.md` untuk setup production
-3. Lihat file `FORMAT_LINK_KONFIRMASI.md` untuk detail keamanan
+   - `DOMAIN_HOSTING_SETUP.md` untuk setup production
+   - `FORMAT_LINK_KONFIRMASI.md` untuk detail keamanan
 
 ### 🤝 Kontribusi
 1. Fork repository
