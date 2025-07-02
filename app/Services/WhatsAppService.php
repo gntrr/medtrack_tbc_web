@@ -11,7 +11,9 @@ class WhatsAppService
 {
     protected $apiKey;
     protected $apiUrl;
-    protected $senderNumber;    public function __construct()
+    protected $senderNumber;    
+    
+    public function __construct()
     {
         // Mengambil konfigurasi dari database settings terlebih dahulu,
         // fallback ke .env jika belum ada di database
@@ -157,6 +159,11 @@ class WhatsAppService
         $pesan .= "_Tim Kesehatan_";
         
         return $this->kirimPesanDenganRiwayat($jadwal, $pesan);
+    }
+
+    public function sendReminderMessage(Jadwal $jadwal)
+    {
+        return $this->kirimPengingat($jadwal);
     }
 
     /**

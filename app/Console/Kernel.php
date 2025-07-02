@@ -12,18 +12,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Menjalankan perintah SendReminders setiap menit untuk memeriksa pengingat yang jatuh tempo
-        $schedule->command('app:send-reminders')->everyMinute();
-        
-        // Jalankan pengiriman pengingat kontrol setiap jam
-        $schedule->command('app:kirim-pengingat')
-                ->hourly()
-                ->appendOutputTo(storage_path('logs/pengingat.log'));
-                
-        // Jalankan pengiriman pengingat obat harian setiap 5 menit
-        $schedule->command('pengingat:kirim-obat')
-                ->everyFiveMinutes()
-                ->appendOutputTo(storage_path('logs/pengingat-obat.log'));
+        // COMMAND UTAMA - Handle semua jenis pengingat (kontrol + obat)
+        $schedule->command('app:send-reminders')
+                ->everyMinute()
+                ->appendOutputTo(storage_path('logs/pengingat.log'))
+                ->withoutOverlapping()
+                ->runInBackground();
                 
         // Bersihkan jadwal obat lama dan tandai konfirmasi terlambat setiap hari jam 1 pagi
         $schedule->command('pengingat:bersihkan-obat')

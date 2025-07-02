@@ -47,17 +47,22 @@ class SendReminderJob implements ShouldQueue
             Log::info('Mengirim pengingat untuk jadwal: ' . $this->jadwal->id);
             
             // Send the reminder
-            $result = $whatsAppService->sendReminderMessage($this->jadwal);
+            $result = $whatsAppService->kirimPengingat($this->jadwal);
             
             Log::info('Pengingat terkirim untuk jadwal: ' . $this->jadwal->id, [
-                'success' => $result['success']
+                'success' => $result['success'] ?? false,
+                'riwayat_id' => $result['riwayat_id'] ?? null,
             ]);
         } catch (\Exception $e) {
             Log::error('Error mengirim pengingat: ' . $e->getMessage(), [
-                'jadwal_id' => $this->jadwal->id
+                'jadwal_id' => $this->jadwal->id,
+                'trace' => $e->getTraceAsString(),
             ]);
             
             // If there's an exception, mark the schedule as failed
+            $this->jadwal->update(['status' => 'gagal']);
+
+            // Update status to failed
             $this->jadwal->update(['status' => 'gagal']);
         }
     }

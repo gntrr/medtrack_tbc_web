@@ -199,14 +199,27 @@ DB_PASSWORD=your_db_password
 ```
 
 ### 🔄 Cron Job Setup
-Tambahkan cron job untuk pengiriman otomatis:
+**PENTING:** Sistem ini menjalankan 2 jenis pengingat (kontrol + obat) melalui 1 cron job:
 
 ```bash
 # Edit crontab
 crontab -e
 
-# Tambahkan baris berikut
+# Tambahkan HANYA baris ini (Laravel scheduler akan handle semua):
 * * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+**Scheduled Tasks yang Berjalan Otomatis:**
+- ⏰ `app:send-reminders` - Cek pengingat kontrol & obat setiap menit
+- 🧹 `pengingat:bersihkan-obat` - Cleanup data lama setiap hari jam 1 pagi
+
+**📊 Monitor Cron Job:**
+```bash
+# Test manual
+php artisan schedule:run
+
+# Monitor log
+tail -f storage/logs/pengingat.log
 ```
 
 ### 🗂️ Cache Optimization

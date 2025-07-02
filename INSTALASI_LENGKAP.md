@@ -170,9 +170,14 @@ sudo nano /etc/nginx/sites-available/medtrack.com
 # SSL Certificate (Let's Encrypt)
 sudo certbot --nginx -d medtrack.com
 
-# Setup cron job
+# Setup cron job - PENTING: Hanya satu cron job yang diperlukan
 crontab -e
 # Add: * * * * * cd /var/www/medtrack && php artisan schedule:run >> /dev/null 2>&1
+
+# CATATAN PENTING:
+# Laravel scheduler akan menjalankan semua scheduled tasks otomatis
+# - app:send-reminders setiap menit (untuk semua jenis jadwal)
+# - pengingat:bersihkan-obat setiap hari jam 1 pagi (cleanup)
 ```
 
 #### 3. Cloud Hosting (AWS, DigitalOcean, etc.)
@@ -180,6 +185,167 @@ crontab -e
 # Similar to VPS setup
 # Use load balancer for high availability
 # Setup database cluster for scaling
+```
+
+## 🕐 Konfigurasi Cron Job yang Optimal
+
+### ⚠️ PENTING: Sistem Dual Schedule
+Project ini memiliki **2 jenis jadwal pengingat**:
+1. **Jadwal Kontrol** (`jenis='kontrol'`) - Pengingat kontrol ke puskesmas sesuai periode
+2. **Jadwal Obat** (`jenis='obat'`) - Pengingat minum obat harian dengan link konfirmasi
+
+### 🎯 Konfigurasi Cron Job yang Benar
+
+#### Untuk Production (Linux/VPS)
+```bash
+# Edit crontab
+crontab -e
+
+# HANYA tambahkan baris ini (Laravel scheduler akan handle semua):
+* * * * * cd /path/to/medtrack && php artisan schedule:run >> /dev/null 2>&1
+
+# JANGAN tambahkan cron job manual lainnya!
+```
+
+#### Untuk Development (Windows/Laragon)
+```cmd
+# Buka Command Prompt sebagai Administrator
+# Buat batch file untuk testing
+echo @echo off > scheduler.bat
+echo cd /d "C:\laragon\www\penjadwalan_obat" >> scheduler.bat
+echo php artisan schedule:run >> scheduler.bat
+
+# Jalankan manual untuk testing
+scheduler.bat
+```
+
+### 📋 Scheduled Tasks yang Aktif
+
+Berdasarkan `app/Console/Kernel.php`, sistem akan menjalankan:
+
+```php
+// Cek pengingat yang jatuh tempo setiap menit (UTAMA)
+$schedule->command('app:send-reminders')->everyMinute();
+
+// Cleanup data lama setiap hari jam 1 pagi
+$schedule->command('pengingat:bersihkan-obat')
+        ->dailyAt('01:00')
+        ->appendOutputTo(storage_path('logs/pembersihan-obat.log'));
+```
+
+**⚠️ Command lain di Kernel.php TIDAK DIPERLUKAN dan sebaiknya dihapus:**
+- `app:kirim-pengingat` (duplikasi)
+- `pengingat:kirim-obat` (duplikasi)
+
+### 🔧 Optimalisasi Kernel.php
+
+**Rekomendasi konfigurasi optimal:**
+
+```php
+protected function schedule(Schedule $schedule): void
+{
+    // Command utama untuk semua jenis pengingat (kontrol + obat)
+    $schedule->command('app:send-reminders')
+            ->everyMinute()
+            ->appendOutputTo(storage_path('logs/pengingat.log'))
+            ->emailOutputOnFailure('admin@example.com'); // Optional
+            
+    // Pembersihan data lama
+    $schedule->command('pengingat:bersihkan-obat')
+            ->dailyAt('01:00')
+            ->appendOutputTo(storage_path('logs/pembersihan-obat.log'));
+}
+```
+### 🧪 Testing Cron Job
+
+#### Test Manual Commands
+```bash
+# Test pengiriman pengingat
+php artisan app:send-reminders
+
+# Test dalam mode dry-run
+php artisan test:pengingat-obat --dry-run
+
+# Test pembersihan
+php artisan pengingat:bersihkan-obat --test
+```
+
+#### Verifikasi Scheduler
+```bash
+# Lihat semua scheduled tasks
+php artisan schedule:list
+
+# Jalankan scheduler sekali (manual)
+php artisan schedule:run
+
+# Monitor log pengingat
+tail -f storage/logs/pengingat.log
+```
+
+### 📊 Monitoring Cron Job
+
+#### Log Files yang Penting
+```bash
+# Log utama Laravel
+tail -f storage/logs/laravel.log
+
+# Log pengiriman pengingat
+tail -f storage/logs/pengingat.log
+
+# Log pembersihan
+tail -f storage/logs/pembersihan-obat.log
+```
+
+#### Cek Status Cron Job (Linux)
+```bash
+# Cek crontab aktif
+crontab -l
+
+# Monitor cron service
+sudo systemctl status cron
+
+# Log cron system
+sudo tail -f /var/log/cron
+```
+
+### 🚨 Troubleshooting Cron Job
+
+#### ❌ Cron Job Tidak Jalan
+1. **Cek Path Project**:
+   ```bash
+   # Pastikan path benar
+   which php
+   pwd
+   ```
+
+2. **Cek Permission**:
+   ```bash
+   # Pastikan user bisa akses
+   ls -la storage/logs/
+   chmod -R 775 storage
+   ```
+
+3. **Test Manual**:
+   ```bash
+   # Test command langsung
+   cd /path/to/project
+   php artisan schedule:run
+   ```
+
+#### ❌ Pengingat Tidak Terkirim
+1. **Cek Database**: Pastikan ada jadwal dengan status 'menunggu'
+2. **Cek WhatsApp API**: Menu Pengaturan → Test pengiriman
+3. **Cek Log**: `tail -f storage/logs/laravel.log`
+
+#### ❌ Command Conflict
+Jika ada error "command not found":
+```bash
+# Clear cache
+php artisan config:clear
+php artisan cache:clear
+
+# Re-register commands
+php artisan optimize
 ```
 
 ## ⚡ Performance Optimization
