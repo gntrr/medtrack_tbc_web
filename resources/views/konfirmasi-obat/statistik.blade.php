@@ -54,7 +54,7 @@
     </div>
 
     <!-- Statistik Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
@@ -66,7 +66,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-500">Total Jadwal</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $statistik['total'] }}</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $statistik['total'] }} Jadwal</p>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-500">Sudah Konfirmasi</p>
-                    <p class="text-2xl font-semibold text-green-600">{{ $statistik['sudah'] }}</p>
+                    <p class="text-2xl font-semibold text-green-600">{{ $statistik['sudah'] }} Pasien</p>
                 </div>
             </div>
         </div>
@@ -97,13 +97,13 @@
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Terlambat</p>
-                    <p class="text-2xl font-semibold text-red-600">{{ $statistik['terlambat'] }}</p>
+                    <p class="text-sm font-medium text-gray-500">Terlambat Konfirmasi</p>
+                    <p class="text-2xl font-semibold text-red-600">{{ $statistik['terlambat'] }} Pasien</p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white shadow rounded-lg p-6">
+        <!-- <div class="bg-white shadow rounded-lg p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -117,7 +117,7 @@
                     <p class="text-2xl font-semibold text-blue-600">{{ $statistik['persentase_kepatuhan'] }}%</p>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Detail Jadwal -->
@@ -178,7 +178,12 @@
                                         <div class="text-sm text-gray-900">{{ $jadwal->tgl_waktu_konfirmasi->format('d/m/Y') }}</div>
                                         <div class="text-sm text-gray-500">{{ $jadwal->tgl_waktu_konfirmasi->format('H:i') }}</div>
                                     @else
-                                        <span class="text-sm text-gray-400">-</span>
+                                        <span class="text-sm text-gray-400">
+                                            <svg class="w-4 h-4 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Belum dikonfirmasi
+                                        </span>
                                     @endif
                                 </td>
                             </tr>
