@@ -71,11 +71,18 @@ class PasienController extends Controller
             ->where('fase', 'lanjutan')
             ->orderBy('periode')
             ->get();
+
+        // Fetch reminder history for the patient (kontrol type only)
+        $riwayatPengingat = $pasien->jadwal()
+            ->where('jenis', 'kontrol')
+            ->orderBy('tanggal_waktu_pengingat', 'asc')
+            ->get();
             
         return view('pasien.show', compact(
             'pasien', 
             'jadwalIntensif', 
-            'jadwalLanjutan'
+            'jadwalLanjutan',
+            'riwayatPengingat'
         ));
     }
 

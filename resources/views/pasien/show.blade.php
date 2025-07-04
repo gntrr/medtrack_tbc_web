@@ -194,21 +194,77 @@
 
                 <div class="p-6 tab-content hidden" id="riwayat-pengingat-content">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold">Riwayat Pengingat</h3>
+                        <h3 class="text-lg font-semibold">Riwayat Pengingat Minum Obat</h3>
                         <a href="{{ route('pasien.riwayat', $pasien) }}" class="text-blue-600 hover:text-blue-800">Lihat Semua</a>
                     </div>
                     
-                    <div id="riwayat-loading" class="text-center py-4">
-                        <svg class="animate-spin h-6 w-6 mx-auto text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <p class="mt-2 text-gray-500">Memuat riwayat pengingat...</p>
-                    </div>
-                    
-                    <div id="riwayat-content" class="hidden">
-                        <!-- Riwayat akan diisi dengan script AJAX -->
-                    </div>
+                    @if($riwayatPengingat->isEmpty())
+                        <div class="text-gray-500 text-center py-4">
+                            Belum ada riwayat pengingat minum obat.
+                        </div>
+                    @else
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal & Waktu</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Konfirmasi</th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($riwayatPengingat->take(10) as $jadwal)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">{{ $jadwal->tanggal_waktu_pengingat->format('d F Y, H:i') }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900">{{ ucfirst($jadwal->jenis) }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($jadwal->status === 'menunggu')
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        Menunggu
+                                                    </span>
+                                                @elseif($jadwal->status === 'terkirim')
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Terkirim
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                        Gagal
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($jadwal->status_konfirmasi === 'sudah')
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Sudah Diminum
+                                                    </span>
+                                                @elseif($jadwal->status_konfirmasi === 'belum')
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        Belum Diminum
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        -
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <a href="{{ route('jadwal.show', $jadwal) }}" class="text-blue-600 hover:text-blue-900 mr-3">Detail</a>
+                                                @if($jadwal->status !== 'terkirim')
+                                                    <a href="#" class="reschedule-btn text-indigo-600 hover:text-indigo-900" data-jadwal-id="{{ $jadwal->id }}" data-tanggal="{{ $jadwal->tanggal_waktu_pengingat->format('Y-m-d\TH:i') }}">Jadwalkan Ulang</a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -282,32 +338,27 @@
                     // Show corresponding content
                     const target = tab.getAttribute('href').substring(1);
                     document.getElementById(target + '-content').classList.remove('hidden');
-                    
-                    // Load riwayat if tab is riwayat-pengingat
-                    if (target === 'riwayat-pengingat') {
-                        loadRiwayat();
-                    }
                 });
             });
             
             // Reschedule Modal
-            const rescheduleButtons = document.querySelectorAll('.reschedule-btn');
             const modal = document.getElementById('reschedule-modal');
             const closeButtons = document.querySelectorAll('.close-modal');
             const rescheduleForm = document.getElementById('reschedule-form');
             const tanggalInput = document.getElementById('tanggal_waktu_pengingat');
             
-            rescheduleButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
+            // Use event delegation for reschedule buttons since they exist in different tabs
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('reschedule-btn')) {
                     e.preventDefault();
-                    const jadwalId = button.getAttribute('data-jadwal-id');
-                    const tanggal = button.getAttribute('data-tanggal');
+                    const jadwalId = e.target.getAttribute('data-jadwal-id');
+                    const tanggal = e.target.getAttribute('data-tanggal');
                     
                     rescheduleForm.action = `{{ route('jadwal.reschedule', '') }}/${jadwalId}`;
                     tanggalInput.value = tanggal;
                     
                     modal.classList.remove('hidden');
-                });
+                }
             });
             
             closeButtons.forEach(button => {
@@ -322,70 +373,6 @@
                     modal.classList.add('hidden');
                 }
             });
-            
-            // Function to load riwayat
-            function loadRiwayat() {
-                const riwayatLoading = document.getElementById('riwayat-loading');
-                const riwayatContent = document.getElementById('riwayat-content');
-                
-                riwayatLoading.classList.remove('hidden');
-                riwayatContent.classList.add('hidden');
-                
-                fetch(`{{ route('pasien.riwayat', $pasien) }}?format=json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        riwayatLoading.classList.add('hidden');
-                        riwayatContent.classList.remove('hidden');
-                        
-                        let html = '';
-                        if (data.length === 0) {
-                            html = '<div class="text-gray-500 text-center py-4">Belum ada riwayat pengingat.</div>';
-                        } else {
-                            html = '<div class="overflow-x-auto">';
-                            html += '<table class="min-w-full divide-y divide-gray-200">';
-                            html += '<thead class="bg-gray-50">';
-                            html += '<tr>';
-                            html += '<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>';
-                            html += '<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fase</th>';
-                            html += '<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>';
-                            html += '<th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>';
-                            html += '</tr>';
-                            html += '</thead>';
-                            html += '<tbody class="bg-white divide-y divide-gray-200">';
-                            
-                            data.forEach(riwayat => {
-                                html += '<tr>';
-                                html += `<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${riwayat.waktu_pengiriman}</div></td>`;
-                                html += `<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${riwayat.jadwal.fase}</div></td>`;
-                                html += '<td class="px-6 py-4 whitespace-nowrap">';
-                                
-                                if (riwayat.status === 'terkirim') {
-                                    html += '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Terkirim</span>';
-                                } else {
-                                    html += '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Gagal</span>';
-                                }
-                                
-                                html += '</td>';
-                                html += `<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">`;
-                                html += `<a href="${riwayat.detail_url}" class="text-blue-600 hover:text-blue-900">Detail</a>`;
-                                html += '</td>';
-                                html += '</tr>';
-                            });
-                            
-                            html += '</tbody>';
-                            html += '</table>';
-                            html += '</div>';
-                        }
-                        
-                        riwayatContent.innerHTML = html;
-                    })
-                    .catch(error => {
-                        console.error('Error loading riwayat:', error);
-                        riwayatLoading.classList.add('hidden');
-                        riwayatContent.classList.remove('hidden');
-                        riwayatContent.innerHTML = '<div class="text-red-500 text-center py-4">Gagal memuat riwayat pengingat.</div>';
-                    });
-            }
         });
     </script>
     @endpush
