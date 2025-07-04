@@ -26,7 +26,7 @@ class RiwayatController extends Controller
     /**
      * Display a listing of histories for a patient.
      */
-    public function riwayatPasien(Pasien $pasien)
+    public function riwayatPasien(Request $request, Pasien $pasien)
     {
         $riwayat = Riwayat::with(['jadwal'])
             ->whereHas('jadwal', function($query) use ($pasien) {
@@ -34,6 +34,22 @@ class RiwayatController extends Controller
             })
             ->latest()
             ->paginate(15);
+            
+        // Handle JSON format request for AJAX calls
+        if ($request->query('format') === 'json') {
+            return response()->json($riwayat->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'waktu_pengiriman' => $item->waktu_pengiriman->format('d M Y, H:i'),
+                    'status' => $item->status,
+                    'jadwal' => [
+                        'fase' => $item->jadwal->fase ? ucfirst($item->jadwal->fase) : 'Obat Harian',
+                        'periode' => $item->jadwal->periode
+                    ],
+                    'detail_url' => route('riwayat.show', $item)
+                ];
+            }));
+        }
             
         return view('riwayat.pasien', compact('pasien', 'riwayat'));
     }
