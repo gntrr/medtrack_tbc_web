@@ -207,7 +207,7 @@
                     </div>
                     
                     <div id="riwayat-content" class="hidden">
-                        <!-- Riwayat akan diisi dengan AJAX -->
+                        <!-- Riwayat akan diisi dengan script AJAX -->
                     </div>
                 </div>
             </div>
