@@ -58,12 +58,13 @@ async function createPatientFailure(browser) {
   await login(page, 'petugas1', 'password123');
   await page.goto(`${base}/pasien/create`);
   const today = new Date().toISOString().slice(0, 10);
-  await page.fill('input[name="nama"]', '');
+  await page.fill('input[name="nama"]', 'Tes Pasien 99');
   await page.fill('textarea[name="alamat"]', 'Jl. Salah 456');
   await page.fill('input[name="nomor_telepon"]', '123');
   await page.fill('input[name="jadwal_pengobatan"]', today);
   await page.click("text=Simpan Pasien");
   await page.waitForSelector("text=Nomor WhatsApp", { timeout: 5000 });
+
   if (!page.url().includes('/pasien/create')) throw new Error('Create patient failure should stay on form');
   const error = await page.locator('text=Nomor WhatsApp').isVisible();
   if (!error) throw new Error('Create patient failure message missing');
